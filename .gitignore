@@ -1,1 +1,36 @@
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env/
+*.env
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/
+
+# SSH keys and sensitive files
 *.pem
+*.key
+*.crt
+
+# GitHub Actions cache
+.github/workflows/*.tmp
+
+# Deployment artifacts
+*.tar.gz
+*.zip
+
+# Gunicorn PID files
+gunicorn.pid
