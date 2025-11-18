@@ -4,7 +4,7 @@
 set -e
 
 # Update and install dependencies
-sudo apt update && sudo apt install -y python3-pip git
+#sudo apt update && sudo apt install -y python3-pip git
 
 # Clone the repository
 if [ ! -d "/home/azureuser/deploy-azure" ]; then
