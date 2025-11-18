@@ -8,7 +8,7 @@ sudo apt update && sudo apt install -y python3-pip git
 
 # Clone the repository
 if [ ! -d "/home/azureuser/deploy-azure" ]; then
-  git clone https://github.com/YOUR-USERNAME/deploy-azure.git /home/azureuser/deploy-azure
+  git clone https://github.com/DevOps2299/deploy-azure.git /home/azureuser/deploy-azure
 fi
 
 cd /home/azureuser/deploy-azure
