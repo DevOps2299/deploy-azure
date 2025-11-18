@@ -1,77 +1,36 @@
-name: CI/CD - Validate HTML and Deploy to Azure VM
+name: Deploy to Azure VM
 
 on:
   push:
     branches:
-      - main  # Trigger only on pushes to main branch
+      - main
 
 jobs:
-  validate-html:
-    runs-on: ubuntu-latest
-    steps:
-      # 1. Checkout repository code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # 2. Set up Node.js for HTMLHint
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      # 3. Install HTMLHint globally
-      - name: Install HTMLHint
-        run: npm install -g htmlhint
-
-      # 4. Validate HTML files
-      - name: Run HTML validation
-        run: |
-          htmlhint "**/*.html" || echo "HTML validation warnings found"
-
-  check-links:
-    runs-on: ubuntu-latest
-    needs: validate-html
-    steps:
-      # 1. Checkout repository code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # 2. Install LinkChecker
-      - name: Install LinkChecker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y linkchecker
-
-      # 3. Run link check on HTML files
-      - name: Check for broken links
-        run: |
-          linkchecker ./ --check-extern || echo "Link check warnings found"
-
   deploy:
     runs-on: ubuntu-latest
-    needs: [validate-html, check-links]  # Deploy only if validations pass
+
     steps:
-      # 1. Checkout repository code
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # 2. Deploy to Azure VM via SSH
-      - name: Deploy to Azure VM
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.AZURE_VM_HOST }}
-          username: ${{ secrets.AZURE_VM_USER }}
-          key: ${{ secrets.AZURE_VM_SSH_KEY }}
-          script: |
-            # Navigate to app directory on VM
-            cd /home/azureuser/deploy-azure
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
 
-            # Fetch and reset to latest main branch
-            git fetch --all
-            git reset --hard origin/main
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-            # Copy updated files to nginx web root
-            sudo cp -r /home/azureuser/deploy-azure/* /var/www/html/
-
-            # Restart nginx to apply changes
-            sudo systemctl restart nginx
+    - name: Deploy to Azure VM via SSH
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.AZURE_VM_HOST }}
+        username: ${{ secrets.AZURE_VM_USER }}
+        key: ${{ secrets.AZURE_VM_SSH_KEY }}
+        script: |
+          cd /home/azureuser/deploy-azure
+          git pull origin main
+          pip install -r requirements.txt
+          sudo systemctl restart flaskapp
