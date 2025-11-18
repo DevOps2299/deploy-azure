@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Install Node.js for HTMLHint
+      # 2. Set up Node.js for HTMLHint
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -66,8 +66,12 @@ jobs:
             # Navigate to app directory on VM
             cd /home/azureuser/deploy-azure
 
-            # Pull latest code
-            git pull origin main
+            # Fetch and reset to latest main branch
+            git fetch --all
+            git reset --hard origin/main
 
-            # Restart nginx (or your web server)
+            # Copy updated files to nginx web root
+            sudo cp -r /home/azureuser/deploy-azure/* /var/www/html/
+
+            # Restart nginx to apply changes
             sudo systemctl restart nginx
