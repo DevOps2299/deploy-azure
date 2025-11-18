@@ -28,11 +28,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      # 4. Install dependencies
+      # 4. Install dependencies (including pytest for testing)
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest  # Ensure pytest is available for tests
 
       # 5. Run tests using pytest
       - name: Run tests
