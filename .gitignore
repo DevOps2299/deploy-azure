@@ -34,3 +34,6 @@ Thumbs.db
 
 # Gunicorn PID files
 gunicorn.pid
+
+# Claude Code
+CLAUDE.md

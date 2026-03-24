@@ -4,7 +4,7 @@
 set -e
 
 # Update and install dependencies
-#sudo apt update && sudo apt install -y python3-pip git
+sudo apt update && sudo apt install -y python3-pip python3.12-venv git
 
 # Clone the repository
 if [ ! -d "/home/azureuser/deploy-azure" ]; then
@@ -13,8 +13,9 @@ fi
 
 cd /home/azureuser/deploy-azure
 
-# Install Python requirements
-pip install -r requirements.txt
+# Create virtual environment and install Python requirements
+python3 -m venv venv
+venv/bin/pip install -r requirements.txt
 
 # Configure systemd service
 sudo cp flaskapp.service /etc/systemd/system/flaskapp.service
