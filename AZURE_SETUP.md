@@ -25,7 +25,7 @@ In the VM's **Networking** blade → **Add inbound port rule** — add each:
 |---|---|
 | 22 | SSH |
 | 5000 | Flask app |
-| 3001 | Uptime Kuma |
+| * | ICMP to allow ping from My IP |
 
 ---
 
@@ -38,21 +38,8 @@ ssh -i azureabc.pem azureuser@<VM_PUBLIC_IP>
 
 ---
 
-## 4. Install Dependencies on the VM
 
-```bash
-sudo apt update && sudo apt install -y python3-pip git
-
-# Docker (for Uptime Kuma)
-sudo apt install -y docker.io docker-compose
-sudo systemctl enable docker
-sudo usermod -aG docker azureuser
-newgrp docker
-```
-
----
-
-## 5. Run the Setup Script
+## 4. Run the Setup Script
 
 The `setup.sh` script clones the repo, installs Python dependencies, and registers the Flask app as a systemd service:
 
@@ -74,18 +61,10 @@ Verify the service is running:
 sudo systemctl status flaskapp
 ```
 
----
-
-## 6. Start Uptime Kuma
-
-```bash
-cd /home/azureuser/deploy-azure
-docker compose up -d
-```
 
 ---
 
-## 7. Configure GitHub Secrets
+## 5. Configure GitHub Secrets
 
 In your GitHub repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**:
 
@@ -105,7 +84,7 @@ Copy the entire output (including `-----BEGIN RSA PRIVATE KEY-----` lines) into 
 
 ---
 
-## 8. Configure Uptime Kuma Monitor
+## 6. Configure Uptime Kuma Monitor
 
 1. Open `http://<VM_IP>:3001` and create an account
 2. **Add New Monitor:**
@@ -121,4 +100,5 @@ Copy the entire output (including `-----BEGIN RSA PRIVATE KEY-----` lines) into 
 
 - [ ] `http://<VM_IP>:5000` — Flask app loads
 - [ ] `http://<VM_IP>:3001` — Uptime Kuma shows green monitor
+- [ ] Push a commit to `main` — GitHub Actions `test` then `deploy` jobs complete successfully
 - [ ] Push a commit to `main` — GitHub Actions `test` then `deploy` jobs complete successfully
