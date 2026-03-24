@@ -29,7 +29,7 @@ Open `http://localhost:5000` in the browser. Show students the live page.
 ## Step 2: Run Tests Locally
 
 ```bash
-pytest
+python -m pytest -v
 ```
 
 Show the passing output. Explain that this same command runs automatically in the pipeline before any deployment happens.
